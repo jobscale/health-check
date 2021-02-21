@@ -35,13 +35,13 @@ class App {
   }
 
   fetchIP() {
-    return fetch('http://inet-ip.info/ip')
+    return fetch('https://inet-ip.info/ip')
     .then(res => res.text())
     .then(res => res.split('\n')[0]);
   }
 
   checkHealth() {
-    process.env.https_proxy = 'http://proxy.secure.jsx.jp:3128';
+    process.env.https_proxy = 'proxy.secure.jsx.jp:3128';
     return fetch(conf.target)
     .then(response => {
       if (!response.ok) throw new Error(response.statusText);
