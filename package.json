@@ -1,0 +1,22 @@
+{
+  "name": "health-check",
+  "version": "1.0.0",
+  "description": "site health check",
+  "main": "app/index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^7.20.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  },
+  "dependencies": {
+    "core": "github:jobscale/core",
+    "node-fetch": "^2.6.1"
+  }
+}

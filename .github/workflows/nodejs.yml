@@ -1,0 +1,35 @@
+name: Node.js CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: >
+      cat /etc/*release
+      echo CPU $(grep MH /proc/cpuinfo)
+      echo Memory $(free -h)
+    - run: |
+      cat /etc/*release
+      echo CPU $(grep MH /proc/cpuinfo)
+      echo Memory $(free -h)
+    - run: dig jsx.jp
+    - run: dig proxy.secret.jsx.jp
+    - run: npm i
+    - run: npm run build --if-present
+    - run: npm test
+    - run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      env:
+        CI: true
