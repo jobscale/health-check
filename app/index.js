@@ -75,15 +75,14 @@ class App {
 
   main() {
     return this.getData()
-    .then(([globalIp, access]) => {
-      return this.checkHealth()
-      .catch(e => {
-        const param = Object.assign({}, template, {
-          text: e.toString(),
-        });
-        return this.send(access, param);
+    .then(([, access]) => this.checkHealth()
+    .catch(e => {
+      const param = {};
+      Object.assign(param, template, {
+        text: e.toString(),
       });
-    });
+      return this.send(access, param);
+    }));
   }
 
   start() {
