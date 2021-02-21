@@ -17,10 +17,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: |
-      cat /etc/*release
-      grep MH /proc/cpuinfo
-      free -h
+    - run: cat /etc/*release
+    - run: grep MH /proc/cpuinfo
+    - run: free -h
     - run: dig jsx.jp
     - run: dig proxy.secret.jsx.jp
     - run: npm i
