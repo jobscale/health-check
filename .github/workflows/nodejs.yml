@@ -19,12 +19,12 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: >
       cat /etc/*release
-      echo CPU $(grep MH /proc/cpuinfo)
-      echo Memory $(free -h)
+      grep MH /proc/cpuinfo
+      free -h
     - run: |
       cat /etc/*release
-      echo CPU $(grep MH /proc/cpuinfo)
-      echo Memory $(free -h)
+      grep MH /proc/cpuinfo
+      free -h
     - run: dig jsx.jp
     - run: dig proxy.secret.jsx.jp
     - run: npm i
