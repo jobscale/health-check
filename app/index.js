@@ -1,8 +1,5 @@
-const { logger } = require('core');
-
 require('core');
 
-global.logger = console;
 const conf = {
   target: 'https://jsx.jp',
   cookie: 'X-AUTH=X0X0X0X0X0X0X0X',
