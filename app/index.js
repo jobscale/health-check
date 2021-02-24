@@ -1,4 +1,5 @@
 require('core');
+const { Slack } = require('slack');
 
 const conf = {
   target: 'https://jsx.jp',
@@ -48,14 +49,8 @@ class App {
   }
 
   send(access, param) {
-    const url = `https://hooks.slack.com/services/${access}`;
-    const body = JSON.stringify(param, null, 2);
-    const options = {
-      method: 'POST',
-      'Content-Type': 'application/json',
-      body,
-    };
-    return fetch(url, options)
+    delete process.env.https_proxy;
+    return new Slack({ access }).send(param)
     .then(response => {
       if (!response.ok) throw new Error(response.statusText);
       return response.text();

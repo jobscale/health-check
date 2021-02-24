@@ -10,13 +10,13 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "core": "github:jobscale/core",
+    "slack": "github:jobscale/slack"
+  },
   "devDependencies": {
     "eslint": "^7.20.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1"
-  },
-  "dependencies": {
-    "core": "github:jobscale/core",
-    "node-fetch": "^2.6.1"
   }
 }
