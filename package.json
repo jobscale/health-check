@@ -1,17 +1,19 @@
 {
   "name": "health-check",
-  "version": "1.0.0",
+  "private": true,
+  "version": "0.0.1",
   "description": "site health check",
   "main": "app/index.js",
   "scripts": {
     "start": "node .",
+    "lint": "eslint .",
     "test": "eslint ."
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "core": "github:jobscale/core",
+    "@jobscale/core": "0.0.3",
     "slack": "github:jobscale/slack"
   },
   "devDependencies": {
