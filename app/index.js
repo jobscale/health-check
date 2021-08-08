@@ -1,16 +1,12 @@
-require('core');
-const { Slack } = require('slack');
+require('@jobscale/core');
 
 const conf = {
   target: 'https://jsx.jp',
-  cookie: 'X-AUTH=X0X0X0X0X0X0X0X',
-  host: 'https://partner.credentials.svc.cluster.local',
+  slack: 'https://tanpo.jsx.jp/api/slack',
+  proxy: 'tcp://proxy.secure.jsx.jp:3128',
 };
-if (process.env.NODE_ENV === 'LOCAL') {
-  conf.host = 'https://jsx.jp:3443';
-}
 const template = {
-  icon_emoji: ':badger:',
+  icon_emoji: ':mobile_phone_off:',
   username: 'Unhealthy',
   text: '',
   attachments: [{
@@ -19,62 +15,38 @@ const template = {
 };
 
 class App {
-  fetchEnv() {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
-    const pattern = [/=/g, '', 'base64'];
-    return fetch(`${conf.host}/env.json`, {
-      method: 'GET',
-      headers: { Cookie: conf.cookie },
-    })
-    .then(res => res.json())
-    .then(res => JSON.parse(
-      Buffer.from(res.env.replace(...pattern), pattern[2]).toString(),
-    ).slack.access);
-  }
-
-  fetchIP() {
-    return fetch('https://inet-ip.info/ip')
-    .then(res => res.text())
-    .then(res => res.split('\n')[0]);
-  }
-
   checkHealth() {
-    process.env.https_proxy = 'proxy.secure.jsx.jp:3128';
+    process.env.https_proxy = conf.proxy;
     return fetch(conf.target)
-    .then(response => {
-      if (!response.ok) throw new Error(response.statusText);
-      if (response.status !== 200) throw new Error(response.statusText);
-      logger.info(response.statusText);
+    .then(res => {
+      if (!res.ok) throw new Error(res.statusText);
+      if (res.status !== 200) throw new Error(res.statusText);
+      logger.info(res.statusText);
     });
   }
 
-  send(access, param) {
-    delete process.env.https_proxy;
-    return new Slack({ access }).send(param)
-    .then(response => {
-      if (!response.ok) throw new Error(response.statusText);
-      return response.text();
-    })
-    .catch(e => e.toString());
-  }
-
-  getData() {
-    return Promise.all([
-      this.fetchIP(),
-      this.fetchEnv(),
-    ]);
+  sendSlack(payload) {
+    const params = [
+      conf.slack, {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      },
+    ];
+    return fetch(...params)
+    .then(res => {
+      if (!res.ok) throw new Error(res.statusText);
+      if (res.status !== 200) throw new Error(res.statusText);
+      logger.info(res.statusText);
+    });
   }
 
   main() {
-    return this.getData()
-    .then(([, access]) => this.checkHealth()
+    return this.checkHealth()
     .catch(e => {
-      const param = {};
-      Object.assign(param, template, {
-        text: e.toString(),
-      });
-      return this.send(access, param);
-    }));
+      const payload = { ...template, text: e.toString() };
+      return this.sendSlack(payload);
+    });
   }
 
   start() {
