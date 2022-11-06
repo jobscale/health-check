@@ -1,4 +1,4 @@
-## health check of over proxy my self
+# health check
 
 ## getting start
 ```bash
@@ -15,9 +15,13 @@ npm start
 
 ## container build and run
 ```bash
-docker build . -t local/health-check
-docker run --rm -e NODE_ENV=LOCAL -it local/health-check
+{
+  docker build . -t local/health-check \
+  && docker run --rm -it local/health-check
+}
 ```
+
+## Kubernetes
 
 ### create cronjob
 ```bash
