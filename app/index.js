@@ -23,8 +23,13 @@ class App {
   checkHealth() {
     return Promise.all(conf.targets.map(target => fetch(target)
     .then(res => {
-      if (res.status !== 200) throw new Error(`Unhealthy ${res.statusText}`);
-      logger.info({ [target]: `Healthy ${res.statusText}` });
+      if (res.status !== 200) throw new Error(res.statusText);
+      logger.info(`Healthy ${target} ${res.statusText}`);
+    })
+    .catch(e => {
+      e.message = `${target} ${e.message}`;
+      logger.info(`Unhealthy ${e.message}`);
+      throw e;
     })));
   }
 
@@ -39,7 +44,6 @@ class App {
     return fetch(...params)
     .then(res => {
       if (res.status !== 200) throw new Error(res.statusText);
-      logger.info(res.statusText);
     });
   }
 
