@@ -2,7 +2,7 @@
 
 ## getting start
 ```bash
-git clone git@github.com:jobscale/health-check.git
+git clone https://github.com/jobscale/health-check.git
 cd health-check
 ```
 
