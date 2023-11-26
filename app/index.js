@@ -10,7 +10,9 @@ const conf = {
   ],
   slack: 'https://jsx.jp/api/slack',
 };
+
 const template = {
+  channel: 'infra',
   icon_emoji: ':mobile_phone_off:',
   username: 'Unhealthy',
   text: '',
