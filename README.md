@@ -9,7 +9,7 @@ cd health-check
 ## local test
 ```bash
 npm i
-npm run lint
+npm run lint --if-present
 npm start
 ```
 
