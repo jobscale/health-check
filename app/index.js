@@ -4,7 +4,7 @@ const { update } = require('./ddns');
 const conf = {
   targets: [
     'https://jsx.jp',
-    'https://site.cdn.jsx.jp',
+    'https://cdn.jsx.jp',
     'https://site.jsx.jp',
   ],
   slack: 'https://jsx.jp/api/slack',
