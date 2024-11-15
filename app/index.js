@@ -1,5 +1,4 @@
 const { logger } = require('@jobscale/logger');
-const { update } = require('./ddns');
 
 const conf = {
   targets: [
@@ -23,16 +22,18 @@ const template = {
 class App {
   checkHealth() {
     const ts = Date.now();
-    return Promise.all(conf.targets.map(target => fetch(target)
-    .then(res => {
-      if (res.status !== 200) throw new Error(res.statusText);
-      logger.info(`Healthy ${target} ${res.statusText} ${Date.now() - ts}`);
-    })
-    .catch(e => {
-      e.message = `${target} ${e.message}`;
-      logger.info(`Unhealthy ${e.message} ${Date.now() - ts}`);
-      throw e;
-    })));
+    return Promise.all(
+      conf.targets.map(target => fetch(target)
+      .then(res => {
+        if (res.status !== 200) throw new Error(res.statusText);
+        logger.info(`Healthy ${target} ${res.statusText} ${Date.now() - ts}`);
+      })
+      .catch(e => {
+        e.message = `${target} ${e.message}`;
+        logger.info(`Unhealthy ${e.message} ${Date.now() - ts}`);
+        throw e;
+      })),
+    );
   }
 
   sendSlack(payload) {
@@ -50,11 +51,7 @@ class App {
   }
 
   main() {
-    return update()
-    .then(res => {
-      logger.info('dns', res);
-      return this.checkHealth();
-    })
+    return this.checkHealth()
     .catch(e => {
       const payload = { ...template, text: e.toString() };
       return this.sendSlack(payload);
