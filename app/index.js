@@ -21,9 +21,9 @@ const template = {
 };
 
 class App {
-  checkHealth() {
+  async checkHealth() {
     const ts = Date.now();
-    return Promise.allSettled(
+    const results = await Promise.allSettled(
       conf.targets.map(
         target => this.fetch(target)
         .then(res => {
@@ -31,11 +31,18 @@ class App {
           logger.info(`Healthy ${target} ${res.statusText} ${Date.now() - ts}(ms)`);
         })
         .catch(e => {
-          logger.info(`Unhealthy ${target} ${e.message} ${Date.now() - ts}(ms)`);
+          if (e.cause) e.message = `${e.cause} ${e.message}`;
+          e.message = `${target} ${e.message}`;
+          logger.info(`Unhealthy ${e.message} ${Date.now() - ts}(ms)`);
           throw e;
         }),
       ),
     );
+    const error = [];
+    results.forEach(result => {
+      if (result.status === 'rejected') error.push(result.reason.message);
+    });
+    if (error.length) throw new Error(`Health check failed for the following targets:\n${error.join('\n')}`);
   }
 
   fetch(input, rest = {}) {
@@ -63,7 +70,7 @@ class App {
   main() {
     return this.checkHealth()
     .catch(e => {
-      const payload = { ...template, text: e.toString() };
+      const payload = { ...template, text: e.message };
       return this.sendSlack(payload);
     });
   }
