@@ -23,18 +23,27 @@ const template = {
 class App {
   checkHealth() {
     const ts = Date.now();
-    return Promise.all(
-      conf.targets.map(target => fetch(target)
-      .then(res => {
-        if (res.status !== 200) throw new Error(res.statusText);
-        logger.info(`Healthy ${target} ${res.statusText} ${Date.now() - ts}`);
-      })
-      .catch(e => {
-        e.message = `${target} ${e.message}`;
-        logger.info(`Unhealthy ${e.message} ${Date.now() - ts}`);
-        throw e;
-      })),
+    return Promise.allSettled(
+      conf.targets.map(
+        target => this.fetch(target)
+        .then(res => {
+          if (res.status !== 200) throw new Error(res.statusText);
+          logger.info(`Healthy ${target} ${res.statusText} ${Date.now() - ts}(ms)`);
+        })
+        .catch(e => {
+          logger.info(`Unhealthy ${target} ${e.message} ${Date.now() - ts}(ms)`);
+          throw e;
+        }),
+      ),
     );
+  }
+
+  fetch(input, rest = {}) {
+    const { timeout = 3000, ...init } = rest;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    return fetch(input, { ...init, signal: controller.signal })
+    .finally(() => clearTimeout(timeoutId));
   }
 
   sendSlack(payload) {
