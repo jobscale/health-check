@@ -70,7 +70,8 @@ class App {
   main() {
     return this.checkHealth()
     .catch(e => {
-      const payload = { ...template, text: e.message };
+      const text = `${e.message}\n${e.stack.split('\n').splice(0, 3).join('\n')}`;
+      const payload = { ...template, text };
       return this.sendSlack(payload);
     });
   }
