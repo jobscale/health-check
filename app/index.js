@@ -28,12 +28,12 @@ class App {
         target => this.fetch(target)
         .then(res => {
           if (res.status !== 200) throw new Error(res.statusText);
-          logger.info(`Healthy ${target} ${res.statusText} ${Date.now() - ts}(ms)`);
+          logger.info(`Healthy '${target}' ${res.statusText} ${Date.now() - ts}(ms)`);
         })
         .catch(e => {
-          if (e.cause) e.message = `${e.cause} ${e.message}`;
-          e.message = `${target} ${e.message}`;
-          logger.info(`Unhealthy ${e.message} ${Date.now() - ts}(ms)`);
+          if (e.cause) e.message = `*${e.cause}* ${e.message}`;
+          e.message = `'${target}' ${e.message} ${Date.now() - ts}(ms)`;
+          logger.info(`Unhealthy ${e.message}`);
           throw e;
         }),
       ),
@@ -42,7 +42,7 @@ class App {
     results.forEach(result => {
       if (result.status === 'rejected') error.push(result.reason.message);
     });
-    if (error.length) throw new Error(`Health check failed for the following targets:\n${error.join('\n')}`);
+    if (error.length) throw new Error(error.join('\n'));
   }
 
   fetch(input, rest = {}) {
@@ -70,8 +70,7 @@ class App {
   main() {
     return this.checkHealth()
     .catch(e => {
-      const text = `${e.message}\n${e.stack.split('\n').splice(0, 3).join('\n')}`;
-      const payload = { ...template, text };
+      const payload = { ...template, text: e.message };
       return this.sendSlack(payload);
     });
   }
