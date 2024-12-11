@@ -28,20 +28,20 @@ class App {
         target => this.fetch(target)
         .then(res => {
           if (res.status !== 200) throw new Error(res.statusText);
-          logger.info(`Healthy '${target}' ${res.statusText} ${Date.now() - ts}(ms)`);
+          logger.info(`Healthy ${target} ${res.statusText} ${Date.now() - ts}(ms)`);
         })
         .catch(e => {
-          if (e.cause) e.message = `*${e.cause}* ${e.message}`;
-          e.message = `'${target}' ${e.message} ${Date.now() - ts}(ms)`;
-          logger.info(`Unhealthy ${e.message}`);
-          throw e;
+          const error = [target];
+          if (e.cause) error.push(e.cause);
+          error.push(e.message);
+          logger.info(`Unhealthy ${error.join(' ')} ${Date.now() - ts}(ms)`);
+          throw new Error(error.join(' '));
         }),
       ),
     );
-    const error = [];
-    results.forEach(result => {
-      if (result.status === 'rejected') error.push(result.reason.message);
-    });
+    const error = results
+    .filter(({ status }) => status === 'rejected')
+    .map(({ reason }) => reason.message);
     if (error.length) throw new Error(error.join('\n'));
   }
 
