@@ -34,7 +34,8 @@ class App {
           const error = [target];
           if (e.cause) error.push(e.cause);
           error.push(e.message);
-          logger.info(`Unhealthy ${error.join(' ')} ${Date.now() - ts}(ms)`);
+          error.push(`${Date.now() - ts}(ms)`);
+          logger.info(`Unhealthy ${error.join(' ')}`);
           throw new Error(error.join(' '));
         }),
       ),
@@ -46,7 +47,7 @@ class App {
   }
 
   fetch(input, rest = {}) {
-    const { timeout = 3000, ...init } = rest;
+    const { timeout = 6000, ...init } = rest;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     return fetch(input, { ...init, signal: controller.signal })
