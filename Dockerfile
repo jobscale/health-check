@@ -1,4 +1,4 @@
-FROM node:lts-bullseye-slim as builder
+FROM node:lts-bookworm-slim as builder
 SHELL ["bash", "-c"]
 WORKDIR /home/node
 USER node
@@ -9,7 +9,7 @@ COPY --chown=node:staff app app
 RUN npm test
 RUN npm ci --omit=dev
 
-FROM node:lts-bullseye-slim
+FROM node:lts-bookworm-slim
 SHELL ["bash", "-c"]
 WORKDIR /home/node
 USER node
