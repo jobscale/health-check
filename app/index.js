@@ -5,7 +5,7 @@ const conf = {
     'https://jsx.jp',
     'https://cdn.jsx.jp',
     'https://www.jsx.jp',
-    'https://site.jsx.jp',
+    'https://site.cdn.jsx.jp',
   ],
   slack: 'https://jsx.jp/api/slack',
 };
