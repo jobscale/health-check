@@ -27,6 +27,7 @@ class App {
       conf.targets.map(
         target => this.fetch(target)
         .then(res => {
+          if (!res.ok) throw new Error(res.statusText);
           if (res.status !== 200) throw new Error(res.statusText);
           logger.info(`Healthy ${target} ${res.statusText} ${Date.now() - ts}(ms)`);
         })
