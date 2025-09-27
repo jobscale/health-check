@@ -1,5 +1,7 @@
 import net from 'net';
-import { logger } from '@jobscale/logger';
+import { createLogger } from '@jobscale/logger';
+
+const logger = createLogger('info', { noPathName: true, timestamp: true });
 
 const conf = {
   webList: [
@@ -9,8 +11,10 @@ const conf = {
     'https://site.cdn.jsx.jp',
   ],
   tcpList: [
-    'noble.jsx.jp:3128',
+    'us.jsx.jp:3128',
     'jp.jsx.jp:443',
+    'n100.jsx.jp:3128',
+    'www.jsx.jp:443',
   ],
   slack: 'https://jsx.jp/api/slack',
 };
@@ -27,27 +31,28 @@ const template = {
 
 class App {
   async healthTcp(target, timeout = 2000) {
+    const ts = Date.now();
     const [host, portStr] = target.split(':');
     const port = Number.parseInt(portStr, 10);
     return new Promise((resolve, reject) => {
       const socket = new net.Socket();
       socket.setTimeout(timeout);
       socket.on('connect', () => {
-        logger.info(`✅ Connected to ${host}:${port}`);
+        logger.info(`✅ Connected to ${host}:${port} ${Date.now() - ts}ms`);
         socket.destroy();
-        resolve(true);
+        resolve(`${Date.now() - ts}ms`);
       });
       socket.on('timeout', () => {
-        logger.error(`⏱️ Timeout after ${timeout}ms`);
         socket.destroy();
-        const error = [target, 'Timeout', `${timeout}ms`];
+        const error = ['❌ Timeout', target, 'after', `${Date.now() - ts}ms`];
+        logger.error(error.join(' '));
         reject(new Error(error.join(' ')));
       });
       socket.on('error', e => {
-        logger.error(`❌ Connection error: ${e.message}`);
-        const error = [target];
+        const error = ['❌ Fail', target];
         if (e.cause) error.push(e.cause);
         error.push(e.message);
+        logger.error(error.join(' '));
         reject(new Error(error.join(' ')));
       });
       socket.connect(port, host);
@@ -60,14 +65,13 @@ class App {
     .then(res => {
       if (!res.ok) throw new Error(res.statusText);
       if (res.status !== 200) throw new Error(res.statusText);
-      logger.info(`Healthy ${target} ${res.statusText} ${Date.now() - ts}(ms)`);
+      logger.info(`✅ Healthy ${target} ${res.statusText} ${Date.now() - ts}ms`);
     })
     .catch(e => {
-      const error = [target];
+      const error = ['❌ Unhealthy', target];
       if (e.cause) error.push(e.cause);
-      error.push(e.message);
-      error.push(`${Date.now() - ts}(ms)`);
-      logger.info(`Unhealthy ${error.join(' ')}`);
+      error.push(e.message, `${Date.now() - ts}ms`);
+      logger.error(error.join(' '));
       throw new Error(error.join(' '));
     });
   }
