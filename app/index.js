@@ -21,7 +21,7 @@ const conf = {
 
 const template = {
   channel: 'infra',
-  icon_emoji: ':mobile_phone_off:',
+  icon_emoji: ':name_badge:',
   username: 'Unhealthy',
   text: '',
   attachments: [{
