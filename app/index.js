@@ -1,4 +1,5 @@
 import net from 'net';
+import { exec } from 'child_process';
 import { createLogger } from '@jobscale/logger';
 
 const logger = createLogger('info', { noPathName: true, timestamp: true });
@@ -16,6 +17,11 @@ const conf = {
     'n100.jsx.jp:3128',
     'www.jsx.jp:443',
   ],
+  udpList: [
+    'us.jsx.jp:53',
+    'n100.jsx.jp:53',
+    'jp.jsx.jp:53',
+  ],
   slack: 'https://jsx.jp/api/slack',
 };
 
@@ -30,7 +36,7 @@ const template = {
 };
 
 class App {
-  async healthTcp(target, timeout = 2000) {
+  async healthTcp(target, timeout = 3000) {
     const ts = Date.now();
     const [host, portStr] = target.split(':');
     const port = Number.parseInt(portStr, 10);
@@ -38,24 +44,50 @@ class App {
       const socket = new net.Socket();
       socket.setTimeout(timeout);
       socket.on('connect', () => {
-        logger.info(`✅ Connected to ${host}:${port} ${Date.now() - ts}ms`);
         socket.destroy();
-        resolve(`${Date.now() - ts}ms`);
+        const info = ['✅ TCP Connected', target, `${Date.now() - ts}ms`];
+        logger.info(info.join(' '));
+        resolve(info.join(' '));
       });
       socket.on('timeout', () => {
         socket.destroy();
-        const error = ['❌ Timeout', target, 'after', `${Date.now() - ts}ms`];
+        const error = ['❌ TCP Timeout', target, 'after', `${Date.now() - ts}ms`];
         logger.error(error.join(' '));
         reject(new Error(error.join(' ')));
       });
       socket.on('error', e => {
-        const error = ['❌ Fail', target];
+        socket.destroy();
+        const error = ['❌ TCP Fail', target];
         if (e.cause) error.push(e.cause);
-        error.push(e.message);
+        error.push(`${Date.now() - ts}ms`, e.message);
         logger.error(error.join(' '));
         reject(new Error(error.join(' ')));
       });
       socket.connect(port, host);
+    });
+  }
+
+  healthUdp(target, timeout = 1000) {
+    const ts = Date.now();
+    const [host, portStr] = target.split(':');
+    const port = Number.parseInt(portStr, 10);
+    const recvLimit = Math.floor(timeout / 1000);
+    return new Promise((resolve, reject) => {
+      exec(`nc -vz -w ${recvLimit} -u ${host} ${port}`, (e, stdout, stderr) => {
+        const ok = stderr.match('succeeded');
+        if (e || !ok) {
+          const error = ['❌ UDP Fail', target];
+          if (e?.cause) error.push(e.cause);
+          error.push(`${Date.now() - ts}ms`);
+          if (stderr) error.push(stderr);
+          logger.error(error.join(' '));
+          reject(new Error(error.join(' ')));
+          return;
+        }
+        const info = ['✅ UDP Open', target, `${Date.now() - ts}ms`];
+        logger.info(info.join(' '));
+        resolve(info.join(' '));
+      });
     });
   }
 
@@ -77,10 +109,16 @@ class App {
   }
 
   async checkHealth() {
-    const results = await Promise.allSettled([
+    const results = [];
+    results.push(...await Promise.allSettled([
       ...conf.webList.map(target => this.healthWeb(target)),
+    ]));
+    results.push(...await Promise.allSettled([
       ...conf.tcpList.map(target => this.healthTcp(target)),
-    ]);
+    ]));
+    results.push(...await Promise.allSettled([
+      ...conf.udpList.map(target => this.healthUdp(target)),
+    ]));
     const error = results
     .filter(({ status }) => status === 'rejected')
     .map(({ reason }) => reason.message);

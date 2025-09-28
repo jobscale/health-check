@@ -12,6 +12,12 @@ RUN npm ci --omit=dev
 FROM node:lts-bookworm-slim
 SHELL ["bash", "-c"]
 WORKDIR /home/node
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  ca-certificates \
+  iproute2 dnsutils netcat-openbsd \
+ && apt-get clean && rm -fr /var/lib/apt/lists/*
+
 USER node
 COPY --from=builder /home/node/node_modules node_modules
 COPY --chown=node:staff package.json .
