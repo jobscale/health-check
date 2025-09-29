@@ -36,7 +36,7 @@ const template = {
 };
 
 class App {
-  async healthTcp(target, timeout = 3000) {
+  async healthTcp(target, timeout = 2000) {
     const ts = Date.now();
     const [host, portStr] = target.split(':');
     const port = Number.parseInt(portStr, 10);
@@ -91,9 +91,9 @@ class App {
     });
   }
 
-  async healthWeb(target) {
+  async healthWeb(target, timeout = 6000) {
     const ts = Date.now();
-    return this.fetch(target)
+    return this.fetch(target, { timeout })
     .then(res => {
       if (!res.ok) throw new Error(res.statusText);
       if (res.status !== 200) throw new Error(res.statusText);
@@ -125,8 +125,8 @@ class App {
     if (error.length) throw new Error(error.join('\n'));
   }
 
-  fetch(input, rest = {}) {
-    const { timeout = 6000, ...init } = rest;
+  fetch(input, opts = {}) {
+    const { timeout = 6000, ...init } = opts;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     return fetch(input, { ...init, signal: controller.signal })
