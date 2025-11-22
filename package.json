@@ -3,21 +3,24 @@
   "private": true,
   "version": "0.0.1",
   "description": "site health check",
-  "main": "app/index.js",
-  "scripts": {
-    "start": "node .",
-    "lint": "eslint .",
-    "test": "eslint ."
-  },
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "type": "module",
+  "main": "app/index.js",
+  "scripts": {
+    "start": "node .",
+    "lint": "eslint",
+    "test": "npm run lint"
+  },
+  "pre-commit": "test",
   "dependencies": {
     "@jobscale/logger": "^0.8.4"
   },
   "devDependencies": {
-    "eslint": "^8.57.1",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.31.0"
+    "@jobscale/eslint-plugin-standard": "^0.0.2",
+    "eslint": "^9.39.1",
+    "eslint-plugin-jest": "^29.2.0",
+    "pre-commit": "^1.2.2"
   }
 }
