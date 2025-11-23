@@ -1,11 +1,9 @@
-FROM node:lts-bookworm-slim as builder
+FROM node:lts-bookworm-slim AS builder
 SHELL ["bash", "-c"]
 WORKDIR /home/node
 USER node
-COPY --chown=node:staff package.json .
+COPY --chown=node:staff . .
 RUN npm i
-COPY --chown=node:staff .eslintrc.js .
-COPY --chown=node:staff app app
 RUN npm test
 RUN npm ci --omit=dev
 
@@ -14,7 +12,7 @@ SHELL ["bash", "-c"]
 WORKDIR /home/node
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  ca-certificates \
+  ca-certificates curl \
   iproute2 dnsutils netcat-openbsd \
  && apt-get clean && rm -fr /var/lib/apt/lists/*
 
