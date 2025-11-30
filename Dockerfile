@@ -1,4 +1,4 @@
-FROM node:lts-tixie-slim AS builder
+FROM node:lts-trixie-slim AS builder
 SHELL ["bash", "-c"]
 WORKDIR /home/node
 USER node
@@ -7,7 +7,7 @@ RUN npm i
 RUN npm test
 RUN npm ci --omit=dev
 
-FROM node:lts-tixie-slim
+FROM node:lts-trixie-slim
 SHELL ["bash", "-c"]
 WORKDIR /home/node
 ENV DEBIAN_FRONTEND=noninteractive
