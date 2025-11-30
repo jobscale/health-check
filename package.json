@@ -1,7 +1,7 @@
 {
   "name": "health-check",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "site health check",
   "keywords": [],
   "author": "",
@@ -9,7 +9,7 @@
   "type": "module",
   "main": "app/index.js",
   "scripts": {
-    "start": "node .",
+    "start": "node app/index.js",
     "lint": "eslint",
     "test": "npm run lint"
   },
@@ -18,7 +18,7 @@
     "@jobscale/logger": "^0.10.1"
   },
   "devDependencies": {
-    "@jobscale/eslint-plugin-standard": "^0.0.3",
+    "@jobscale/eslint-plugin-standard": "^0.0.8",
     "eslint": "^9.39.1",
     "eslint-plugin-jest": "^29.2.1",
     "pre-commit": "^1.2.2"
