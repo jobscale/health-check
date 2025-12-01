@@ -13,12 +13,11 @@ const conf = {
   ],
   tcpList: [
     'us.jsx.jp:3128',
-    'jp.jsx.jp:443',
+    'os.jsx.jp:443',
     'www.jsx.jp:443',
   ],
   udpList: [
     'us.jsx.jp:53',
-    'jp.jsx.jp:53',
   ],
   slack: 'https://jsx.jp/api/slack',
 };
