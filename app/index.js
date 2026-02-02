@@ -124,10 +124,11 @@ class App {
 
   fetch(input, opts = {}) {
     const { timeout = 6000, ...init } = opts;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-    return fetch(input, { ...init, signal: controller.signal })
-    .finally(() => clearTimeout(timeoutId));
+    const ac = new AbortController();
+    ac.terminate = () => clearTimeout(ac.terminate.tid);
+    ac.terminate.tid = setTimeout(() => ac.abort(), timeout);
+    return fetch(input, { ...init, signal: ac.signal })
+    .finally(() => ac.terminate());
   }
 
   sendSlack(payload) {
