@@ -123,7 +123,7 @@ class App {
   }
 
   fetch(input, opts = {}) {
-    const { timeout = 6000, ...init } = opts;
+    const { timeout = 6_000, ...init } = opts;
     const ac = new AbortController();
     ac.terminate = () => clearTimeout(ac.terminate.tid);
     ac.terminate.tid = setTimeout(() => ac.abort(), timeout);
