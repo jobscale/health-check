@@ -10,6 +10,11 @@ const conf = {
     'https://cdn.jsx.jp',
     'https://www.jsx.jp',
     'https://site.cdn.jsx.jp',
+    'https://sshwifty.jsx.jp',
+    'https://wiki.jsx.jp/doku.php',
+    'https://zipcode.jsx.jp',
+    'https://todo.jsx.jp',
+    'https://mqtt.jsx.jp',
   ],
   tcpList: [
     'us.jsx.jp:3128',
