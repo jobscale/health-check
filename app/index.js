@@ -9,7 +9,6 @@ const conf = {
     'https://jsx.jp',
     'https://cdn.jsx.jp',
     'https://www.jsx.jp',
-    'https://site.cdn.jsx.jp',
     'https://sshwifty.jsx.jp',
     'https://wiki.jsx.jp/doku.php',
     'https://zipcode.jsx.jp',
