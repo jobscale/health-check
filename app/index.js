@@ -9,11 +9,11 @@ const conf = {
     'https://jsx.jp',
     'https://cdn.jsx.jp',
     'https://www.jsx.jp',
-    'https://sshwifty.jsx.jp',
-    'https://wiki.jsx.jp/doku.php',
     'https://zipcode.jsx.jp',
-    'https://todo.jsx.jp',
     'https://mqtt.jsx.jp',
+    // 'https://sshwifty.jsx.jp',
+    // 'https://wiki.jsx.jp/doku.php',
+    // 'https://todo.jsx.jp',
   ],
   tcpList: [
     'us.jsx.jp:3128',
@@ -29,7 +29,7 @@ const conf = {
 const template = {
   channel: 'infra',
   icon_emoji: ':name_badge:',
-  username: 'Unhealthy',
+  username: 'Health Check',
   text: '',
   attachments: [{
     fallback: '',
