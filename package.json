@@ -1,7 +1,7 @@
 {
-  "name": "health-check",
   "private": true,
-  "version": "0.0.6",
+  "name": "health-check",
+  "version": "0.0.7",
   "description": "site health check",
   "keywords": [],
   "author": "",
@@ -15,7 +15,7 @@
   },
   "pre-commit": "test",
   "dependencies": {
-    "@jobscale/logger": "^0.11.1"
+    "@jobscale/create-logger": "^1.0.5"
   },
   "devDependencies": {
     "@jobscale/eslint-plugin-standard": "^0.1.2",

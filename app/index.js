@@ -1,8 +1,8 @@
 import net from 'net';
 import { exec } from 'child_process';
-import { createLogger } from '@jobscale/logger';
+import { createLogger } from '@jobscale/create-logger';
 
-const logger = createLogger('info', { noPathName: true, timestamp: true });
+const logger = createLogger({ level: 'info', timestamp: true });
 
 const conf = {
   webList: [
@@ -12,7 +12,6 @@ const conf = {
     'https://mqtt.jsx.jp',
     'https://zipcode.jsx.jp',
     'https://sshwifty.jsx.jp',
-    'https://todo.jsx.jp',
   ],
   tcpList: [
     'us.jsx.jp:3128',
